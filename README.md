@@ -1,9 +1,9 @@
-# ngapi
+# DecAPIthlon
 
-NGAPI is Django Rest Framework based application
+DecAPIthlon is Django Rest Framework based application
 which provides a few endpoints which allow to post/get a movie or comment to the database and get top commented movies.
 
-Available here - https://ngaping.herokuapp.com/
+Available here - https://decapithlon.herokuapp.com/
 
 - POST /movies:
     requires movie title in json format:

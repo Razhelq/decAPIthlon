@@ -1,5 +1,6 @@
 import logging
 import requests
+from requests.exceptions import ConnectionError
 
 from django.db.models import Count
 from rest_framework.views import APIView
@@ -12,6 +13,7 @@ from django.conf import settings
 
 from task.models import Movie, Comment
 from task.serializers import MovieSerializer, CommentSerializer, TopSerializer
+from task.configuration import apikey
 
 
 class MovieListView(ListAPIView):
@@ -24,6 +26,10 @@ class MovieListView(ListAPIView):
 
     def post(self, request):
         data = self.get_movie_details(request.data)
+        if not data:
+            content = {'omdbapi not responding': 'nothing to see here'}
+            response = Response(content, status=status.HTTP_404_NOT_FOUND)
+            return response
         serializer = MovieSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -34,7 +40,10 @@ class MovieListView(ListAPIView):
 
     @staticmethod
     def get_movie_details(data):
-        movie_json = requests.get(f"https://omdbapi.com/?t={data['title']}&apikey=8e68ddd9").json()
+        try:
+            movie_json = requests.get(f"https://omdbapi.com/?t={data['title']}&apikey={apikey}").json()
+        except ConnectionError:
+            return False
         data['title'] = movie_json['Title']
         data['year'] = movie_json['Year'][:4]
         data['imdb_id'] = movie_json['imdbID']
