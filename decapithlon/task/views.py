@@ -20,23 +20,25 @@ from task.serializers import MovieSerializer, CommentSerializer, TopSerializer
 class MovieListView(ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['title', 'year', 'type', 'imdb_id', 'poster']
-    search_fields = '__all__'
     ordering_fields = '__all__'
 
     def post(self, request):
         data = self.get_movie_details(request.data)
+        # if omdbapi is not responding
         if not data:
             content = {'omdbapi not responding': 'nothing to see here'}
             response = Response(content, status=status.HTTP_404_NOT_FOUND)
-            return response
+        if data == 'Movie not found!':
+            content = {'movie not found': 'need correct title'}
+            response = Response(content, status=status.HTTP_400_BAD_REQUEST)
         serializer = MovieSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             response = Response(serializer.data, status=status.HTTP_201_CREATED)
-            return response
-        response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            response = Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return response
 
     @staticmethod
@@ -45,11 +47,14 @@ class MovieListView(ListAPIView):
             movie_json = requests.get(f"https://omdbapi.com/?t={data['title']}&apikey={os.environ.get('API_KEY')}").json()
         except ConnectionError:
             return False
-        data['title'] = movie_json['Title']
-        data['year'] = movie_json['Year'][:4]
-        data['imdb_id'] = movie_json['imdbID']
-        data['type'] = movie_json['Type']
-        data['poster'] = movie_json['Poster']
+        if movie_json['Response'] == 'False':
+            return 'Movie not found!'
+        else:
+            data['title'] = movie_json['Title']
+            data['year'] = movie_json['Year'][:4]
+            data['imdb_id'] = movie_json['imdbID']
+            data['type'] = movie_json['Type']
+            data['poster'] = movie_json['Poster']
         return data
 
 
