@@ -20,7 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '+1b4pe!#2ib+g1qw-$@5=t@ahdb7ed-wspxx#+wszcfly=zi!^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -30,7 +29,6 @@ ALLOWED_HOSTS = ['https://decapithlon.herokuapp.com/']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,16 +75,16 @@ WSGI_APPLICATION = 'decapithlon.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {}
-DATABASES['default'] = dj_database_url.config(
-    default='postgres://vhmhkpavzsmiqi:bb435e011dc7cb8bbb62c568dd6e0056096390d4fc1d4fb2b5c079f576829b06@ec2-54-246-87-132.eu-west-1.compute.amazonaws.com:5432/ddk314e9aee2vg'
-)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+# DATABASES = {}
+# DATABASES['default'] = dj_database_url.config(
+#     default='postgres://vhmhkpavzsmiqi:bb435e011dc7cb8bbb62c568dd6e0056096390d4fc1d4fb2b5c079f576829b06@ec2-54-246-87-132.eu-west-1.compute.amazonaws.com:5432/ddk314e9aee2vg'
+# )
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
