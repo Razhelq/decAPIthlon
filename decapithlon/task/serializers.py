@@ -23,6 +23,11 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('movie', 'body', 'movie_id', 'date')
+        extra_kwargs = {
+            'movie': {'required': False},
+            'date': {'required': False},
+        }
+        validators = []
 
 
 class TopSerializer(serializers.Serializer):
