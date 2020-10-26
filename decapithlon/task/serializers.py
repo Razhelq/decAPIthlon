@@ -5,7 +5,15 @@ from task.models import Movie, Comment
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ('title', 'year', 'type', 'imdb_id', 'poster')
+        fields = ('id', 'title', 'year', 'type', 'imdb_id', 'poster')
+        extra_kwargs = {
+            'title': {'required': False},
+            'year': {'required': False},
+            'type': {'required': False},
+            'imdb_id': {'required': False},
+            'poster': {'required': False},
+        }
+        validators = []
 
 
 class CommentSerializer(serializers.ModelSerializer):
