@@ -125,24 +125,12 @@ class TopListView(APIView):
             top.append({
                 'movie_id': movie.id,
                 'total_comments': len(comment),
-                'rank': 0
+                'rank': 1
             })
         top = sorted(top, key=lambda x: x['total_comments'], reverse=True)
-        position = 1
-        for x in range(len(top)):
-            if x == 0:
-                if top[x]['total_comments'] != 0:
-                    top[0]['rank'] = position
+        for x in range(1, len(top)):
+            if top[x]['total_comments'] == top[x-1]['total_comments']:
+                top[x]['rank'] = top[x-1]['rank']
             else:
-                if top[x]['total_comments'] == top[x-1]['total_comments']:
-                    top[x]['rank'] = position
-                else:
-                    position += 1
-                    if position == 4:
-                        break
-                    top[x]['rank'] = position
-        new_top = []
-        for movie in top:
-            if movie['rank'] != 0 and movie['total_comments'] != 0:
-                new_top.append(movie)
-        return new_top
+                top[x]['rank'] = top[x-1]['rank']+1
+        return top
