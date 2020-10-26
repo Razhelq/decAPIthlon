@@ -46,7 +46,8 @@ class MovieListView(ListAPIView):
     @staticmethod
     def get_movie_details(data):
         try:
-            movie_json = requests.get(f"https://omdbapi.com/?t={data['title']}&apikey={os.environ.get('API_KEY')}").json()
+            movie_json = requests.get(f"https://omdbapi.com/?t={data['title']}&apikey={os.environ.get('API_KEY')}")\
+                .json()
         except ConnectionError:
             return False
         if movie_json['Response'] == 'False':
@@ -107,7 +108,7 @@ class TopListView(APIView):
             data = self.count_top(date_start, date_end)
             serializer = TopSerializer(data=data, many=True)
             if serializer.is_valid():
-                response = Response(serializer.data)
+                response = Response(serializer.data, status=status.HTTP_200_OK)
                 return response
         response = Response(
             "Time range is required (date_start, date_end):    e.g. "
@@ -128,9 +129,15 @@ class TopListView(APIView):
                 'rank': 1
             })
         top = sorted(top, key=lambda x: x['total_comments'], reverse=True)
-        for x in range(1, len(top)):
+        final_top = [top[0]]
+        for x in range(1, len(top)-1):
             if top[x]['total_comments'] == top[x-1]['total_comments']:
                 top[x]['rank'] = top[x-1]['rank']
+                final_top.append(top[x])
             else:
-                top[x]['rank'] = top[x-1]['rank']+1
-        return top
+                if top[x-1]['rank'] < 3:
+                    top[x]['rank'] = top[x-1]['rank']+1
+                    final_top.append(top[x])
+                else:
+                    break
+        return final_top
