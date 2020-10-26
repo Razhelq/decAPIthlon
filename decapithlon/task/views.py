@@ -85,8 +85,8 @@ class MovieView(APIView):
 class CommentListView(ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    # filter_backends = [SearchFilter]
-    search_fields = ['movie__id']
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['movie__id']
 
     def post(self, request):
         serializer = CommentSerializer(data=request.data)
