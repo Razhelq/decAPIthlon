@@ -13,14 +13,22 @@ Available here - https://decapithlon.herokuapp.com/
     allows filtering and ordering
     e.g. movies/?ordering=id
     movies/?year=2014
+    
+- PUT /movies/<movie-id>/:
+    allows updating any data related to given movie id
+    e.g. movies/17/
+    
+- DELETE /movies/<movie-id>/:
+    allows deleting a movie
+    e.g. movies/17/
 
 - POST /comments:
     requires movie id and comment body data in json format:
     {"movie_id": "movie_title", "body": "comment_body"}
 
 - GET /comments:
-    allows searching by movie id:
-    e.g. comments/?search=1
+    allows filtering by movie id:
+    e.g. comments/?movie__id=1
     
 - GET /top:
     requires time range in below format
