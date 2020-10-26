@@ -21,7 +21,7 @@ class MovieListView(ListAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['title', 'year', 'type', 'imdb_id', 'poster']
+    filterset_fields = ['id', 'title', 'year', 'type', 'imdb_id', 'poster']
     ordering_fields = '__all__'
 
     def post(self, request):
@@ -30,9 +30,11 @@ class MovieListView(ListAPIView):
         if not data:
             content = {'omdbapi not responding': 'nothing to see here'}
             response = Response(content, status=status.HTTP_404_NOT_FOUND)
+            return response
         if data == 'Movie not found!':
             content = {'movie not found': 'need correct title'}
             response = Response(content, status=status.HTTP_400_BAD_REQUEST)
+            return response
         serializer = MovieSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -58,10 +60,32 @@ class MovieListView(ListAPIView):
         return data
 
 
+class MovieView(APIView):
+
+    def get_object(self, id):
+        try:
+            return Movie.objects.get(id=id)
+        except Movie.DoesNotExist:
+            raise Http404
+
+    def put(self, request, id):
+        movie = self.get_object(id)
+        serializer = MovieSerializer(movie, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        movie = self.get_object(id)
+        movie.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class CommentListView(ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    filter_backends = [SearchFilter]
+    # filter_backends = [SearchFilter]
     search_fields = ['movie__id']
 
     def post(self, request):

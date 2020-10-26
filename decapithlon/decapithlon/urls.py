@@ -16,11 +16,12 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from task.views import MovieListView, CommentListView, TopListView
+from task.views import MovieListView, MovieView, CommentListView, TopListView
 
 urlpatterns = [
     url('admin/', admin.site.urls),
     url(r'^movies/$', MovieListView.as_view(), name='movie-list'),
+    url(r'^movies/(?P<id>(\d)*)/$', MovieView.as_view(), name='movie'),
     url(r'^comments/$', CommentListView.as_view(), name='comment-list'),
     url(r'^top/$', TopListView.as_view(), name='top-list')
 ]
