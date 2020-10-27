@@ -1,17 +1,14 @@
 import os
-import logging
 import requests
 from requests.exceptions import ConnectionError
-import environ
 
-from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from django.conf import settings
+from django.http import Http404
 
 from task.models import Movie, Comment
 from task.serializers import MovieSerializer, CommentSerializer, TopSerializer
@@ -26,8 +23,7 @@ class MovieListView(ListAPIView):
 
     def post(self, request):
         data = self.get_movie_details(request.data)
-        # if omdbapi is not responding
-        if not data:
+        if not data:    # if omdbapi is not responding
             content = {'omdbapi not responding': 'nothing to see here'}
             response = Response(content, status=status.HTTP_404_NOT_FOUND)
             return response
@@ -100,7 +96,12 @@ class CommentListView(ListAPIView):
 
 
 class TopListView(APIView):
-
+    """
+    This would be first thing to refactor.
+    I think I would have to rebuild models to get some meaningful values
+    with for example annotate and Counter while filtering querysets.
+    Lack of time makes me leave it this way.
+    """
     def get(self, request):
         date_start = request.GET.get('date_start')
         date_end = request.GET.get('date_end')
