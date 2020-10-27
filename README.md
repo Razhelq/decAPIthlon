@@ -15,11 +15,11 @@ Available here - https://decapithlon.herokuapp.com/
     e.g. movies/?ordering=id
     movies/?year=2014
     
-- PUT /movies/<movie-id>/:
+- PUT /movies/(movie-id)/:
     allows updating any data related to given movie id
     e.g. movies/17/
     
-- DELETE /movies/<movie-id>/:
+- DELETE /movies/(movie-id)/:
     allows deleting a movie
     e.g. movies/17/
 
@@ -33,7 +33,7 @@ Available here - https://decapithlon.herokuapp.com/
     
 - GET /top:
     requires time range in below format
-    top/?date_start=2020-04-17T00:00:00.000Z&date_end=2021-04-19T00:00:00.000Z
+    - top/?date_start=2020-04-17T00:00:00.000Z&date_end=2021-04-19T00:00:00.000Z
     
     (Top would be first thing to refactor. It seems to be overcomplicated.
     I think I would have to rebuild models to get some meaningful values 
